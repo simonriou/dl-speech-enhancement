@@ -1,0 +1,12 @@
+# --------------------------
+# Python version
+# Requires Python 3.9
+# pip install will ignore is version mismatches
+python == "3.9"
+# --------------------------
+# Packages for macOS
+tensorflow-macos == "2.13.0"
+tensorflow-metal
+librosa
+tqdm
+numpy == "1.24.3"

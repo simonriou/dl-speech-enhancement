@@ -1,0 +1,11 @@
+# --------------------------
+# Python version
+# Requires Python 3.9
+# pip install will ignore is version mismatches
+python == "3.9"
+# --------------------------
+# Packages for windows
+tensorflow == "2.13.0"
+librosa
+tqdm
+numpy == "1.24.3"
