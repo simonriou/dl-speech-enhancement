@@ -5,8 +5,8 @@ from tqdm import tqdm
 # --------------------------
 # CONFIG
 # --------------------------
-source_dir = "/Users/simonriou/Documents/Phelma/3A/DL/Project/dl-speech-enhance/dataset/LibriSpeech"  # directory to search recursively
-target_dir = "/Users/simonriou/Documents/Phelma/3A/DL/Project/dl-speech-enhance/dataset/speech"  # directory where .flac files will be moved
+source_dir = "/Users/simonriou/Documents/Phelma/3A/DL/Project/dl-speech-enhance/dataset/test/LibriSpeech"  # directory to search recursively
+target_dir = "/Users/simonriou/Documents/Phelma/3A/DL/Project/dl-speech-enhance/dataset/test"  # directory where .flac files will be moved
 
 # Create target directory if it doesn't exist
 os.makedirs(target_dir, exist_ok=True)
