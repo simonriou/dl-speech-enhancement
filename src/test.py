@@ -12,7 +12,7 @@ from tqdm import tqdm
 # ============================
 MODEL_PATH = "cnn_mask_model.h5"
 TEST_AUDIO_DIR = "./dataset/test/noisy"
-OUTPUT_DIR = "./src/test_output/"
+OUTPUT_DIR = "./dataset/output/test_output/"
 SR = 16000          # sampling rate
 N_FFT = 1024
 HOP_LENGTH = 256
