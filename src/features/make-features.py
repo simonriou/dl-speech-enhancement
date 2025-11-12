@@ -4,8 +4,8 @@ import librosa
 from tqdm import tqdm
 
 # --------------- Configuration ---------------
-NOISY_DIR = './dataset/test/noisy'
-FEATURES_DIR = './dataset/test/features'
+NOISY_DIR = './data/dataset/noisy'
+FEATURES_DIR = './data/dataset/train/features'
 SAMPLE_RATE = 16000
 N_FFT = 1024
 HOP_LENGTH = 256
@@ -24,6 +24,9 @@ for fname in tqdm(os.listdir(NOISY_DIR), desc="Extracting features"):
 
     # Load audio
     y, _ = librosa.load(path, sr=SAMPLE_RATE)
+
+    # Normalize audio
+    y = y / (np.max(np.abs(y)) + EPSILON)
 
     # Compute STFT
     S = librosa.stft(y, n_fft=N_FFT, hop_length=HOP_LENGTH, win_length=WIN_LENGTH)

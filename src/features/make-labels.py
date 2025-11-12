@@ -6,10 +6,10 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 SAMPLE_RATE = 16000
-SPEECH_DIR = "./dataset/speech/"
-NOISE_PATH = "./dataset/noise/babble_16k.wav"
-NOISY_DIR = "./dataset/noisy/"
-IBM_OUTPUT_DIR = "./dataset/train/labels/"
+SPEECH_DIR = "./data/dataset/speech/"
+NOISE_PATH = "./data/dataset/noise/babble_16k.wav"
+NOISY_DIR = "./data/dataset/noisy/"
+IBM_OUTPUT_DIR = "./data/train/labels/"
 
 os.makedirs(IBM_OUTPUT_DIR, exist_ok=True)
 
@@ -18,6 +18,11 @@ def compute_IBM(signal, noise, n_fft=1024, hop_length=None, win_length=None):
         hop_length = n_fft // 4
     if win_length is None:
         win_length = n_fft
+
+    # Normalize inputs
+    EPSILON = 1e-10
+    signal = signal / (np.max(np.abs(signal)) + EPSILON)
+    noise = noise / (np.max(np.abs(noise)) + EPSILON)
 
     # Compute STFTs
     S = librosa.stft(signal, n_fft=n_fft, hop_length=hop_length, win_length=win_length)
