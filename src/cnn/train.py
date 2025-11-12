@@ -14,8 +14,8 @@ model.summary()
 
 # Create data generators
 train_gen = SpectrogramDataGenerator(
-    features_dir='./data/train/features',
-    labels_dir='./data/train/labels',
+    features_dir='./data/train/features/',
+    labels_dir='./data/train/labels/',
     batch_size=batch_size,
     shuffle=True
 )
