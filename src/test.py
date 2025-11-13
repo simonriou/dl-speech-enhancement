@@ -10,9 +10,9 @@ from tqdm import tqdm
 # ============================
 # Configuration
 # ============================
-MODEL_PATH = "cnn_mask_model.h5"
-TEST_AUDIO_DIR = "./dataset/test/noisy"
-OUTPUT_DIR = "./dataset/output/test_output/"
+MODEL_PATH = "./checkpoints/model_epoch_15.h5"
+TEST_AUDIO_DIR = "./data/test/noisy"
+OUTPUT_DIR = "./data/output/test_output/"
 SR = 16000          # sampling rate
 N_FFT = 1024
 HOP_LENGTH = 256

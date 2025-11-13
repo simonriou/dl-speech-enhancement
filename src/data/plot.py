@@ -3,14 +3,11 @@ import librosa
 import matplotlib.pyplot as plt
 import numpy as np
 
-print(os.getcwd())
-print(os.listdir("data/dataset/speech")[:10])
-
 SPEECH_DIR = "data/dataset/speech/"
 NOISY_DIR = "data/dataset/noisy/"
 LABELS_DIR = "data/train/labels/"
 
-FILE_ID = '174-50561-0003'
+FILE_ID = '2035-147961-0001'
 
 # Get the filenames
 speech_file = f"{SPEECH_DIR}{FILE_ID}.flac"

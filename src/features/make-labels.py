@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 SAMPLE_RATE = 16000
 SPEECH_DIR = "./data/dataset/speech/"
-NOISE_PATH = "./data/dataset/noise/babble_16k.wav"
+NOISE_DIR = "./data/dataset/noise/"
 NOISY_DIR = "./data/dataset/noisy/"
 IBM_OUTPUT_DIR = "./data/train/labels/"
 
@@ -57,14 +57,21 @@ for fname in tqdm(os.listdir(SPEECH_DIR), desc="Processing files"):
     if noisy_file is None:
         raise FileNotFoundError(f"No noisy file found for speech ID: {speech_id}")
 
+    # Format for the noisy file: {speech_id}_noisy_{start_idx}_{noise_type}_{noise_file}.flac (no _ in noise_file)
     # Extract start index from noisy filename
-    start_idx = int(noisy_file.split('_')[-1].split('.')[0])
+    start_idx = int(noisy_file.split('_')[2])
+    noise_type = noisy_file.split('_')[3]
+    noise_file_name = noisy_file.split('_')[4].replace('.flac', '.wav')
+
+    fpath = f"{NOISE_DIR}{noise_type}/{noise_file_name}"
+
+    print(f"Processing {speech_id}: noise_type={noise_type}, noise_file={noise_file_name}, start_idx={start_idx} | path={fpath}")
 
     # Load speech signal
     speech_signal, _ = librosa.load(os.path.join(SPEECH_DIR, fname), sr=SAMPLE_RATE)
 
     # Load noise signal
-    noise_signal, _ = librosa.load(NOISE_PATH, sr=SAMPLE_RATE)
+    noise_signal, _ = librosa.load(fpath, sr=SAMPLE_RATE)
 
     # Extract noise segment
     noise_segment = noise_signal[start_idx:start_idx + len(speech_signal)]

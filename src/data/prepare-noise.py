@@ -7,18 +7,22 @@ from tqdm import tqdm
 
 # --------------- Configuration ---------------
 SPEECH_DIR = './data/dataset/speech/'
-NOISE_PATH = './data/dataset/noise/babble_16k.wav'
+NOISE_TYPE = 'ambient-hospital' # 'babble', 'ten-places' or 'ambient-hospital'
+NOISE_DIR = f"./data/dataset/noise/{NOISE_TYPE}/"
 OUTPUT_NOISE_DIR = './data/dataset/noisy/'
 SAMPLE_RATE = 16000
 DURATION = 3  # seconds
 TARGET_SNR = 10 # dB
+MAX_NOISE_FILES = 100
+EPSILON = 1e-10
 # ----------- End of Configuration ------------
 
 os.makedirs(OUTPUT_NOISE_DIR, exist_ok=True)
 
-# Load cafeteria noise file
-noise, _ = librosa.load(NOISE_PATH, sr=SAMPLE_RATE)
-noise_len = len(noise)
+# Get the list of noise files in NOISE_DIR
+noise_files = [f for f in os.listdir(NOISE_DIR) if f.endswith('.wav')]
+if MAX_NOISE_FILES is not None:
+    noise_files = random.sample(noise_files, min(MAX_NOISE_FILES, len(noise_files)))
 
 # Compute target length in samples
 target_len = int(SAMPLE_RATE * DURATION)
@@ -50,12 +54,18 @@ for fname in tqdm(os.listdir(SPEECH_DIR)):
     sf.write(tmp_path, speech_trunc, SAMPLE_RATE, format='FLAC')
     os.replace(tmp_path, speech_path)
 
-    # ---------- 2: Select random noise segment ----------
+    # ---------- 2: Select random file & segment ----------
+    noise_file = random.choice(noise_files)
+    noise, _ = librosa.load(NOISE_DIR + noise_file, sr=SAMPLE_RATE)
+    noise_len = len(noise)
     start_idx = random.randint(0, noise_len - target_len)
     noise_seg = noise[start_idx:start_idx + target_len]
 
     # ---------- 3: Add noise at fixed SNR ----------
-    alpha = 10 ** ( - TARGET_SNR / 20)
+    signal_power = np.mean(speech_trunc ** 2)
+    noise_power = np.mean(noise_seg ** 2)
+
+    alpha = np.sqrt(signal_power / ((noise_power + EPSILON) * (10 ** (TARGET_SNR / 10))))
 
     noisy = speech_trunc + alpha * noise_seg
 
@@ -67,7 +77,7 @@ for fname in tqdm(os.listdir(SPEECH_DIR)):
     # ---------- 4: Save noisy file ----------
     # Encode noise start index in file name for traceability
     base = os.path.splitext(fname)[0] # e.g., "xx-xxxxxx-xxxx"
-    out_name = f"{base}_noisy_{start_idx}.flac"
+    out_name = f"{base}_noisy_{start_idx}_{NOISE_TYPE}_{noise_file.replace('.wav', '')}.flac"
     out_path = os.path.join(OUTPUT_NOISE_DIR, out_name)
     sf.write(out_path, noisy, SAMPLE_RATE)
 
