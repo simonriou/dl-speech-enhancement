@@ -10,18 +10,19 @@ from tqdm import tqdm
 # ============================
 # Configuration
 # ============================
-MODEL_PATH = "./checkpoints/model_epoch_15.h5"
+MODEL_PATH = "./models/model3.keras"
 TEST_AUDIO_DIR = "./data/test/noisy"
 OUTPUT_DIR = "./data/output/test_output/"
 SR = 16000          # sampling rate
 N_FFT = 1024
 HOP_LENGTH = 256
+SAMPLE_TEST = True # Only process a sample for quick testing
 
 # ============================
 # Load model
 # ============================
 print("Loading model...")
-model = tf.keras.models.load_model(MODEL_PATH)
+model = tf.keras.models.load_model(MODEL_PATH, compile=False)
 print("Model loaded successfully.")
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -48,6 +49,10 @@ def spectrogram_to_audio(mag, phase):
 # ============================
 test_files = [f for f in os.listdir(TEST_AUDIO_DIR) if f.lower().endswith('.flac')]
 
+if SAMPLE_TEST:
+    # Only select 10% of files for quick testing
+    test_files = test_files[:max(1, len(test_files) // 10)]
+
 print(f"Processing {len(test_files)} test files...")
 
 for filename in tqdm(test_files, desc="Processing audio files"):
@@ -59,6 +64,14 @@ for filename in tqdm(test_files, desc="Processing audio files"):
 
     # Predict mask
     pred_mask = model.predict(mag)[0, ..., 0]  # remove batch and channel dims
+
+    # # Plot predicted mask (optional)
+    # plt.figure(figsize=(10, 4))
+    # librosa.display.specshow(pred_mask.T, sr=SR, hop_length=HOP_LENGTH, y_axis='log', x_axis='time')
+    # plt.title(f"Predicted Mask - {filename}")
+    # plt.colorbar()
+    # plt.tight_layout()
+    # plt.show()
 
     # Apply mask to magnitude
     enhanced_mag = np.abs(mag[0, ..., 0]) * pred_mask

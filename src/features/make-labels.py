@@ -65,7 +65,7 @@ for fname in tqdm(os.listdir(SPEECH_DIR), desc="Processing files"):
 
     fpath = f"{NOISE_DIR}{noise_type}/{noise_file_name}"
 
-    print(f"Processing {speech_id}: noise_type={noise_type}, noise_file={noise_file_name}, start_idx={start_idx} | path={fpath}")
+    # print(f"Processing {speech_id}: noise_type={noise_type}, noise_file={noise_file_name}, start_idx={start_idx} | path={fpath}")
 
     # Load speech signal
     speech_signal, _ = librosa.load(os.path.join(SPEECH_DIR, fname), sr=SAMPLE_RATE)

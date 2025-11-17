@@ -1,8 +1,8 @@
 import os
 import numpy as np
 
-FEATURES_DIR = "./dataset/train/features"
-LABELS_DIR = "./dataset/train/labels"
+FEATURES_DIR = "./data/train/features"
+LABELS_DIR = "./data/train/labels"
 
 feature_shapes = []
 label_shapes = []

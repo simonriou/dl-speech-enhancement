@@ -1,6 +1,6 @@
 import os
 
-directory = './data/dataset/noise/ten-places/'
+directory = './data/dataset/noise/babble/'
 
 # List all files (excluding subdirectories)
 files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]

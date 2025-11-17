@@ -2,40 +2,67 @@ from cnn import build_cnn_mask_model
 import os
 from data import SpectrogramDataGenerator
 from tensorflow.keras.callbacks import ModelCheckpoint
+import tensorflow as tf
+import numpy as np
 
 os.makedirs('./checkpoints/', exist_ok=True)
 os.makedirs('./models/', exist_ok=True)
+os.makedirs('./history/', exist_ok=True)
 
-freq_bins = 513  # NFFT/2 + 1
+# GPU configuration (Metal)
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        logical_gpus = tf.config.list_logical_devices('GPU')
+        print(f"{len(gpus)} Physical GPUs, {len(logical_gpus)} Logical GPUs")
+    except RuntimeError as e:
+        print(e)
+
+freq_bins = 513
 n_frames = 188
 input_shape = (freq_bins, n_frames, 1)
 batch_size = 8
 epochs = 15
+validation_split = 0.2  # 20% val
 
 # Build model
 model = build_cnn_mask_model(input_shape)
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 model.summary()
 
-# Create data generators
+# --- Data generators with proper split ---
 train_gen = SpectrogramDataGenerator(
     features_dir='./data/train/features/',
     labels_dir='./data/train/labels/',
     batch_size=batch_size,
-    shuffle=True
+    shuffle=True,
+    validation_split=validation_split,
+    subset='training'
 )
 
-# Callback to save a checkpoint at each epoch
+val_gen = SpectrogramDataGenerator(
+    features_dir='./data/train/features/',
+    labels_dir='./data/train/labels/',
+    batch_size=batch_size,
+    shuffle=False,
+    validation_split=validation_split,
+    subset='validation'
+)
+
+# Save a checkpoint after each epoch
 checkpoint_callback = ModelCheckpoint(
-    filepath='./checkpoints/model_epoch_{epoch:02d}.h5',  # Save each epoch separately
-    save_weights_only=False,  # Save the full model
+    filepath='./checkpoints/model_epoch_{epoch:02d}.h5',
+    save_weights_only=False,
     save_freq='epoch',
     verbose=1
 )
 
-# Train
-model.fit(
+# --- Train and record history ---
+history = model.fit(
     train_gen,
+    validation_data=val_gen,
     epochs=epochs,
     callbacks=[checkpoint_callback]
 )
@@ -43,25 +70,11 @@ model.fit(
 # Save final model
 model.save('./models/model3.keras')
 
-# Model 1: (Trained on development set, using only babble_16k.wav as noise)
-# - 2x Conv2D 32 + MaxPool(1,2)
-# - 2x Conv2D 64 + MaxPool(1,2)
-# - 2x Conv2D 128
-# - Upsample(1,2) + Conv2D 64
-# - Upsample(1,2) + Conv2D 32
-# - Conv2D 1 (sigmoid)
-# Trained for 15 epochs, batch size 8
-# No normalization before making features, nor before testing
-# No BatchNorm layers
+# --- Save training curves ---
+np.save('./history/loss.npy', history.history['loss'])
+np.save('./history/val_loss.npy', history.history['val_loss'])
 
-# Model 2: (Trained on development set, using only babble_16k.wav as noise)
-# - Same as Model 1, except
-# - MaxPools are (2, 2) instead of (1, 2)
-# - Upsamples are (2, 2) instead of (1, 2)
-# - Added crop to match dimensions
-# - Adding BatchNorm after each Conv2D
-# - Added normalization before making features, and before testing
-# Trained for 15 epochs, batch size 8
+np.save('./history/accuracy.npy', history.history['accuracy'])
+np.save('./history/val_accuracy.npy', history.history['val_accuracy'])
 
-# Model 3: (Trained on development set, with different types of noises - from ambient-hospital)
-# Same as Model 2
+print("Saved training history in ./history/")

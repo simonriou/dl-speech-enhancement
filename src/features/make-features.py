@@ -4,8 +4,8 @@ import librosa
 from tqdm import tqdm
 
 # --------------- Configuration ---------------
-NOISY_DIR = './data/dataset/noisy'
-FEATURES_DIR = './data/train/features'
+NOISY_DIR = './data/test/noisy'
+FEATURES_DIR = './data/test/features'
 SAMPLE_RATE = 16000
 N_FFT = 1024
 HOP_LENGTH = 256

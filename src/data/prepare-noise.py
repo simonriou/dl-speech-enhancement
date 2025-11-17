@@ -6,13 +6,13 @@ import librosa
 from tqdm import tqdm
 
 # --------------- Configuration ---------------
-SPEECH_DIR = './data/dataset/speech/'
-NOISE_TYPE = 'ambient-hospital' # 'babble', 'ten-places' or 'ambient-hospital'
+SPEECH_DIR = './data/test/clean/'
+NOISE_TYPE = 'babble' # 'babble', 'ten-places' or 'ambient-hospital'
 NOISE_DIR = f"./data/dataset/noise/{NOISE_TYPE}/"
-OUTPUT_NOISE_DIR = './data/dataset/noisy/'
+OUTPUT_NOISE_DIR = './data/test/noisy/'
 SAMPLE_RATE = 16000
 DURATION = 3  # seconds
-TARGET_SNR = 10 # dB
+TARGET_SNR = 5 # dB
 MAX_NOISE_FILES = 100
 EPSILON = 1e-10
 # ----------- End of Configuration ------------

@@ -4,7 +4,7 @@ import tqdm
 import soundfile as sf
 
 # --------------- Configuration ---------------
-NOISE_DIR = './data/dataset/noise/'
+NOISE_DIR = './data/dataset/noise/babble/'
 TARGET_SR = 16000
 # ----------- End of Configuration ------------
 
