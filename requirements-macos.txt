@@ -5,8 +5,7 @@
 python == "3.9"
 # --------------------------
 # Packages for macOS
-tensorflow-macos == "2.13.0"
-tensorflow-metal
+pytorch
 librosa
 tqdm
 numpy == "1.24.3"

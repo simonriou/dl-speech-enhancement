@@ -181,3 +181,12 @@ ax2.grid(axis='y', alpha=0.75)
 
 plt.tight_layout()
 plt.show()
+
+# Save metrics to ./performances/model3/
+os.makedirs('./performances/model3/', exist_ok=True)
+np.save('./performances/model3/sdr_scores.npy', np.array(sdr_scores))
+np.save('./performances/model3/noisy_sdr_scores.npy', np.array(noisy_sdr_scores))
+np.save('./performances/model3/stoi_scores.npy', np.array(stoi_scores))
+np.save('./performances/model3/noisy_stoi_scores.npy', np.array(noisy_stoi_scores))
+np.save('./performances/model3/estoi_scores.npy', np.array(estoi_scores))
+np.save('./performances/model3/noisy_estoi_scores.npy', np.array(noisy_estoi_scores))
